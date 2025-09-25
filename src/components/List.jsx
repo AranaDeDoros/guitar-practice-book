@@ -23,13 +23,8 @@ const List  =  memo(() =>  {
   let emptyProduct = {
     id: null,
     name: "",
-    image: null,
-    description: "",
     category: null,
     price: 0,
-    quantity: 0,
-    rating: 0,
-    inventoryStatus: "INSTOCK",
   };
   const [product, setProduct] = useState(emptyProduct);
   const [productDialog, setProductDialog] = useState(false);
@@ -39,7 +34,7 @@ const List  =  memo(() =>  {
   const [submitted, setSubmitted] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   useEffect(() => {
-    ProductService.getProductsWithOrdersSmall().then((data) =>
+    ProductService.getProducts().then((data) =>
       setProducts(data)
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -89,7 +84,6 @@ const List  =  memo(() =>  {
         });
       } else {
         _product.id = createId();
-        _product.image = "product-placeholder.svg";
         _products.push(_product);
         toast.current.show({
           severity: "success",
@@ -248,21 +242,7 @@ const List  =  memo(() =>  {
     );
   };
 
-  const getSeverity = (product) => {
-    switch (product.inventoryStatus) {
-      case "INSTOCK":
-        return "success";
 
-      case "LOWSTOCK":
-        return "warning";
-
-      case "OUTOFSTOCK":
-        return "danger";
-
-      default:
-        return null;
-    }
-  };
   const productDialogFooter = (
     <React.Fragment>
       <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
@@ -306,80 +286,12 @@ const List  =  memo(() =>  {
     return formatCurrency(rowData.amount);
   };
 
-  const statusOrderBodyTemplate = (rowData) => {
-    return (
-      <Tag
-        value={rowData.status.toLowerCase()}
-        severity={getOrderSeverity(rowData)}
-      ></Tag>
-    );
-  };
-
   const searchBodyTemplate = () => {
     return <Button icon="pi pi-search" />;
   };
 
-  const imageBodyTemplate = (rowData) => {
-    return (
-      <img
-        src={`https://primefaces.org/cdn/primereact/images/product/${rowData.image}`}
-        alt={rowData.image}
-        width="64px"
-        className="shadow-4"
-      />
-    );
-  };
-
   const priceBodyTemplate = (rowData) => {
     return formatCurrency(rowData.price);
-  };
-
-  const ratingBodyTemplate = (rowData) => {
-    return <Rating value={rowData.rating} readOnly cancel={false} />;
-  };
-
-  const statusBodyTemplate = (rowData) => {
-    return (
-      <Tag
-        value={rowData.inventoryStatus}
-        severity={getProductSeverity(rowData)}
-      ></Tag>
-    );
-  };
-
-  const getProductSeverity = (product) => {
-    switch (product.inventoryStatus) {
-      case "INSTOCK":
-        return "success";
-
-      case "LOWSTOCK":
-        return "warning";
-
-      case "OUTOFSTOCK":
-        return "danger";
-
-      default:
-        return null;
-    }
-  };
-
-  const getOrderSeverity = (order) => {
-    switch (order.status) {
-      case "DELIVERED":
-        return "success";
-
-      case "CANCELLED":
-        return "danger";
-
-      case "PENDING":
-        return "warning";
-
-      case "RETURNED":
-        return "info";
-
-      default:
-        return null;
-    }
   };
 
   const allowExpansion = (rowData) => {
@@ -390,31 +302,7 @@ const List  =  memo(() =>  {
     return (
       <div className="p-3">
         <h5>Orders for {data.name}</h5>
-        <DataTable
-          value={data.orders}
-
-        >
-          <Column selectionMode="single" exportable={false}></Column>
-          <Column field="id" header="Id" sortable></Column>
-          <Column field="customer" header="Customer" sortable></Column>
-          <Column field="date" header="Date" sortable></Column>
-          <Column
-            field="amount"
-            header="Amount"
-            body={amountBodyTemplate}
-            sortable
-          ></Column>
-          <Column
-            field="status"
-            header="Status"
-            body={statusOrderBodyTemplate}
-            sortable
-          ></Column>
-          <Column
-            headerStyle={{ width: "4rem" }}
-            body={searchBodyTemplate}
-          ></Column>
-        </DataTable>
+         <div>tab</div>
       </div>
     );
   };
@@ -426,12 +314,16 @@ const List  =  memo(() =>  {
           icon="pi pi-plus"
           severity="success"
           onClick={openNew}
+          className="btn"
+         style={{ ...stylesheet.btn, ...stylesheet.new }}
         />
         <Button
           label="Delete"
           icon="pi pi-trash"
           severity="danger"
           onClick={confirmDeleteSelected}
+          className="btn"
+          style={{ ...stylesheet.btn, ...stylesheet.delete }}
           disabled={!selectedProducts || !selectedProducts.length}
         />
       </div>
@@ -486,28 +378,15 @@ const List  =  memo(() =>  {
           globalFilter={globalFilter}
         >
           <Column selectionMode="multiple" exportable={false}></Column>
-          <Column expander={true} style={{ width: "25rem" }} />
-          <Column field="name" header="Name" sortable />
-          <Column header="Image" body={imageBodyTemplate} />
+          <Column expander={true}   />
+          <Column field="name" header="Title" sortable />
           <Column
             field="price"
-            header="Price"
+            header="Artist"
             sortable
             body={priceBodyTemplate}
           />
-          <Column field="category" header="Category" sortable />
-          <Column
-            field="rating"
-            header="Reviews"
-            sortable
-            body={ratingBodyTemplate}
-          />
-          <Column
-            field="inventoryStatus"
-            header="Status"
-            sortable
-            body={statusBodyTemplate}
-          />
+          <Column field="category" header="Progress" sortable />
           <Column
             body={actionBodyTemplate}
             exportable={false}
@@ -524,16 +403,10 @@ const List  =  memo(() =>  {
           footer={productDialogFooter}
           onHide={hideDialog}
         >
-          {product.image && (
-            <img
-              src={`https://primefaces.org/cdn/primereact/images/product/${product.image}`}
-              alt={product.image}
-              className="product-image block m-auto pb-3"
-            />
-          )}
+
           <div className="field">
             <label htmlFor="name" className="font-bold">
-              Name
+              Title
             </label>
             <InputText
               id="name"
@@ -549,70 +422,26 @@ const List  =  memo(() =>  {
               <small className="p-error">Name is required.</small>
             )}
           </div>
-          <div className="field">
-            <label htmlFor="description" className="font-bold">
-              Description
-            </label>
-            <InputTextarea
-              id="description"
-              value={product.description}
-              onChange={(e) => onInputChange(e, "description")}
-              required
-              rows={3}
-              cols={20}
-            />
-          </div>
+
 
           <div className="field">
-            <label className="mb-3 font-bold">Category</label>
-            <div className="formgrid grid">
-              <div className="field-radiobutton col-6">
-                <RadioButton
-                  inputId="category1"
-                  name="category"
-                  value="Accessories"
-                  onChange={onCategoryChange}
-                  checked={product.category === "Accessories"}
-                />
-                <label htmlFor="category1">Accessories</label>
-              </div>
-              <div className="field-radiobutton col-6">
-                <RadioButton
-                  inputId="category2"
-                  name="category"
-                  value="Clothing"
-                  onChange={onCategoryChange}
-                  checked={product.category === "Clothing"}
-                />
-                <label htmlFor="category2">Clothing</label>
-              </div>
-              <div className="field-radiobutton col-6">
-                <RadioButton
-                  inputId="category3"
-                  name="category"
-                  value="Electronics"
-                  onChange={onCategoryChange}
-                  checked={product.category === "Electronics"}
-                />
-                <label htmlFor="category3">Electronics</label>
-              </div>
-              <div className="field-radiobutton col-6">
-                <RadioButton
-                  inputId="category4"
-                  name="category"
-                  value="Fitness"
-                  onChange={onCategoryChange}
-                  checked={product.category === "Fitness"}
-                />
-                <label htmlFor="category4">Fitness</label>
-              </div>
-            </div>
+            <label className="mb-3 font-bold">Artist</label>
+             <InputText
+               id="category"
+               value={product.name}
+               onChange={(e) => onInputChange(e, "name")}
+               required
+               autoFocus
+               className={classNames({
+                 "p-invalid": submitted && !product.category,
+               })}
+             />
           </div>
 
           <div className="formgrid grid">
             <div className="field col">
               <label htmlFor="price" className="font-bold">
-                Price
+                Progress
               </label>
               <InputNumber
                 id="price"
@@ -623,22 +452,12 @@ const List  =  memo(() =>  {
                 locale="en-US"
               />
             </div>
-            <div className="field col">
-              <label htmlFor="quantity" className="font-bold">
-                Quantity
-              </label>
-              <InputNumber
-                id="quantity"
-                value={product.quantity}
-                onValueChange={(e) => onInputNumberChange(e, "quantity")}
-              />
-            </div>
           </div>
         </Dialog>
 
         <Dialog
           visible={deleteProductDialog}
-          style={{ width: "32rem" }}
+          style={{ width: "24rem" }}
           breakpoints={{ "960px": "75vw", "641px": "90vw" }}
           header="Confirm"
           modal
@@ -660,7 +479,7 @@ const List  =  memo(() =>  {
 
         <Dialog
           visible={deleteProductsDialog}
-          style={{ width: "32rem" }}
+          style={{ width: "24rem" }}
           breakpoints={{ "960px": "75vw", "641px": "90vw" }}
           header="Confirm"
           modal
@@ -684,4 +503,17 @@ const List  =  memo(() =>  {
   );
 })
 
+const stylesheet = {
+    btn : {
+        padding: '10px',
+        fontSize: '1rem'
+    },
+    new:{
+        backgroundColor : '#25788f',
+        border: "1px solid #25788f"
+    },
+    delete: {
+        backgroundColor : '#ef4444',
+    }
+}
 export default List;
