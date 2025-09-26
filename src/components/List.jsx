@@ -1,124 +1,115 @@
-import React, { useState, useEffect, useRef , memo} from "react";
+import React, { useState, useEffect, useRef , memo } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { ProductService } from "./service/ProductService";
-import { Rating } from "primereact/rating";
+import { SongService } from "./service/SongService";
 import { Button } from "primereact/button";
-import { Tag } from "primereact/tag";
 import { Toast } from "primereact/toast";
 import { Toolbar } from "primereact/toolbar";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import { InputTextarea } from "primereact/inputtextarea";
 import { Player } from "./Player";
 import { classNames } from "primereact/utils";
-import { RadioButton } from "primereact/radiobutton";
-import { InputNumber } from "primereact/inputnumber";
+import { ProgressEnum } from "../enums/ProgressEnum";
+import { Progress } from "./Progress";
 
 const List  =  memo(() =>  {
-  const [products, setProducts] = useState([]);
+  const [songs, setSongs] = useState([]);
   const [expandedRows, setExpandedRows] = useState(null);
   const toast = useRef(null);
   const [url, setUrl] = useState("");
-  let emptyProduct = {
+  let emptySong = {
     id: null,
     name: "",
-    category: null,
-    price: 0,
+    artist: "",
+    progress: ProgressEnum.NEW.value,
   };
-  const [product, setProduct] = useState(emptyProduct);
-  const [productDialog, setProductDialog] = useState(false);
-  const [deleteProductDialog, setDeleteProductDialog] = useState(false);
-  const [deleteProductsDialog, setDeleteProductsDialog] = useState(false);
-  const [selectedProducts, setSelectedProducts] = useState(null);
+  const [song, setSong] = useState(emptySong);
+  const [songDialog, setSongDialog] = useState(false);
+  const [deleteSongDialog, setDeleteSongDialog] = useState(false);
+  const [deleteSongsDialog, setDeleteSongsDialog] = useState(false);
+  const [selectedSongs, setSelectedSongs] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   useEffect(() => {
-    ProductService.getProducts().then((data) =>
-      setProducts(data)
+    SongService.getSongs().then((data) =>
+      setSongs(data)
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const formatCurrency = (value) => {
-    return value.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
-  };
 
   const openNew = () => {
-    setProduct(emptyProduct);
+    setSong(emptySong);
     setSubmitted(false);
-    setProductDialog(true);
+    setSongDialog(true);
   };
 
   const hideDialog = () => {
     setSubmitted(false);
-    setProductDialog(false);
+    setSongDialog(false);
   };
 
-  const hideDeleteProductDialog = () => {
-    setDeleteProductDialog(false);
+  const hideDeleteSongDialog = () => {
+    setDeleteSongDialog(false);
   };
 
-  const hideDeleteProductsDialog = () => {
-    setDeleteProductsDialog(false);
+  const hideDeleteSongsDialog = () => {
+    setDeleteSongsDialog(false);
   };
 
-  const saveProduct = () => {
+  const saveSong = () => {
     setSubmitted(true);
 
-    if (product.name.trim()) {
-      let _products = [...products];
-      let _product = { ...product };
+    if (song.name) {
+      let _songs = [...songs];
+      let _song = { ...song };
 
-      if (product.id) {
-        const index = findIndexById(product.id);
+      if (song.id) {
+        const index = findIndexById(song.id);
 
-        _products[index] = _product;
+        _songs[index] = _song;
         toast.current.show({
           severity: "success",
           summary: "Successful",
-          detail: "Product Updated",
+          detail: "Song Updated",
           life: 3000,
         });
       } else {
-        _product.id = createId();
-        _products.push(_product);
+        _song.id = createId();
+        _songs.push(_song);
         toast.current.show({
           severity: "success",
           summary: "Successful",
-          detail: "Product Created",
+          detail: "Song Created",
           life: 3000,
         });
       }
 
-      setProducts(_products);
-      setProductDialog(false);
-      setProduct(emptyProduct);
+      setSongs(_songs);
+      setSongDialog(false);
+      setSong(emptySong);
     }
   };
 
-  const editProduct = (product) => {
-    setProduct({ ...product });
-    setProductDialog(true);
+  const editSong = (song) => {
+    setSong({ ...song });
+    setSongDialog(true);
   };
 
-  const confirmDeleteProduct = (product) => {
-    setProduct(product);
-    setDeleteProductDialog(true);
+  const confirmDeleteSong = (song) => {
+    setSong(song);
+    setDeleteSongDialog(true);
   };
 
-  const deleteProduct = () => {
-    let _products = products.filter((val) => val.id !== product.id);
+  const deleteSong = () => {
+    let _songs = songs.filter((val) => val.id !== song.id);
 
-    setProducts(_products);
-    setDeleteProductDialog(false);
-    setProduct(emptyProduct);
+    setSongs(_songs);
+    setDeleteSongDialog(false);
+    setSong(emptySong);
     toast.current.show({
       severity: "success",
       summary: "Successful",
-      detail: "Product Deleted",
+      detail: "Song Deleted",
       life: 3000,
     });
   };
@@ -126,8 +117,8 @@ const List  =  memo(() =>  {
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < products.length; i++) {
-      if (products[i].id === id) {
+    for (let i = 0; i < songs.length; i++) {
+      if (songs[i].id === id) {
         index = i;
         break;
       }
@@ -149,52 +140,44 @@ const List  =  memo(() =>  {
   };
 
   const confirmDeleteSelected = () => {
-    setDeleteProductsDialog(true);
+    setDeleteSongsDialog(true);
   };
 
-  const deleteSelectedProducts = () => {
-    let _products = products.filter((val) => !selectedProducts.includes(val));
+  const deleteSelectedSongs = () => {
+    let _songs = songs.filter((val) => !selectedSongs.includes(val));
 
-    setProducts(_products);
-    setDeleteProductsDialog(false);
-    setSelectedProducts(null);
+    setSongs(_songs);
+    setDeleteSongsDialog(false);
+    setSelectedSongs(null);
     toast.current.show({
       severity: "success",
       summary: "Successful",
-      detail: "Products Deleted",
+      detail: "Songs Deleted",
       life: 3000,
     });
   };
 
-  const onCategoryChange = (e) => {
-    let _product = { ...product };
+  const onartistChange = (e) => {
+    let _song = { ...song };
 
-    _product["category"] = e.value;
-    setProduct(_product);
+    _song["artist"] = e.value;
+    setSong(_song);
   };
 
   const onInputChange = (e, name) => {
     const val = (e.target && e.target.value) || "";
-    let _product = { ...product };
+    let _song = { ...song };
 
-    _product[`${name}`] = val;
+    _song[`${name}`] = val;
 
-    setProduct(_product);
+    setSong(_song);
   };
 
-  const onInputNumberChange = (e, name) => {
-    const val = e.value || 0;
-    let _product = { ...product };
-
-    _product[`${name}`] = val;
-
-    setProduct(_product);
-  };
 
   const onRowExpand = (event) => {
     toast.current.show({
       severity: "info",
-      summary: "Product Expanded",
+      summary: "Song Expanded",
       detail: event.data.name,
       life: 3000,
     });
@@ -203,7 +186,7 @@ const List  =  memo(() =>  {
   const onRowCollapse = (event) => {
     toast.current.show({
       severity: "success",
-      summary: "Product Collapsed",
+      summary: "Song Collapsed",
       detail: event.data.name,
       life: 3000,
     });
@@ -212,7 +195,7 @@ const List  =  memo(() =>  {
   const expandAll = () => {
     let _expandedRows = {};
 
-    products.forEach((p) => (_expandedRows[`${p.id}`] = true));
+    songs.forEach((p) => (_expandedRows[`${p.id}`] = true));
 
     setExpandedRows(_expandedRows);
   };
@@ -229,69 +212,71 @@ const List  =  memo(() =>  {
           rounded
           outlined
           className="mr-2"
-          onClick={() => editProduct(rowData)}
+          onClick={() => editSong(rowData)}
         />
         <Button
           icon="pi pi-trash"
           rounded
           outlined
           severity="danger"
-          onClick={() => confirmDeleteProduct(rowData)}
+          onClick={() => confirmDeleteSong(rowData)}
         />
       </React.Fragment>
     );
   };
 
 
-  const productDialogFooter = (
+  const songDialogFooter = (
     <React.Fragment>
       <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
-      <Button label="Save" icon="pi pi-check" onClick={saveProduct} />
+      <Button label="Save" icon="pi pi-check" onClick={saveSong} />
     </React.Fragment>
   );
-  const deleteProductDialogFooter = (
+
+  const deleteSongDialogFooter = (
     <React.Fragment>
       <Button
         label="No"
         icon="pi pi-times"
         outlined
-        onClick={hideDeleteProductDialog}
+        onClick={hideDeleteSongDialog}
       />
       <Button
         label="Yes"
         icon="pi pi-check"
         severity="danger"
-        onClick={deleteProduct}
+        onClick={deleteSong}
       />
     </React.Fragment>
   );
-  const deleteProductsDialogFooter = (
+  const deleteSongsDialogFooter = (
     <React.Fragment>
       <Button
         label="No"
         icon="pi pi-times"
         outlined
-        onClick={hideDeleteProductsDialog}
+        onClick={hideDeleteSongsDialog}
       />
       <Button
         label="Yes"
         icon="pi pi-check"
         severity="danger"
-        onClick={deleteSelectedProducts}
+        onClick={deleteSelectedSongs}
       />
     </React.Fragment>
   );
 
-  const amountBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.amount);
-  };
+
+const progressBodyTemplate = (rowData) => {
+    return  <Progress level={ProgressEnum.NEW}/>
+}
 
   const searchBodyTemplate = () => {
     return <Button icon="pi pi-search" />;
   };
 
-  const priceBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.price);
+  const artistBodyTemplate = (rowData) => {
+    return (rowData.artist);
   };
 
   const allowExpansion = (rowData) => {
@@ -324,7 +309,7 @@ const List  =  memo(() =>  {
           onClick={confirmDeleteSelected}
           className="btn"
           style={{ ...stylesheet.btn, ...stylesheet.delete }}
-          disabled={!selectedProducts || !selectedProducts.length}
+          disabled={!selectedSongs || !selectedSongs.length}
         />
       </div>
     );
@@ -341,8 +326,6 @@ const List  =  memo(() =>  {
     </div>
   );
 
-
-
   const onRowClick = (ev) => {
     setUrl("https://www.youtube.com/embed/R5MOaLXie2k?si=Z09jQzTiTKHuHT_w");
   };
@@ -358,7 +341,7 @@ const List  =  memo(() =>  {
         <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar>
 
         <DataTable
-          value={products}
+          value={songs}
           expandedRows={expandedRows}
           onRowToggle={(e) => setExpandedRows(e.data)}
           onRowExpand={onRowExpand}
@@ -368,25 +351,26 @@ const List  =  memo(() =>  {
           dataKey="id"
           header={header}
           tableStyle={{ minWidth: "60rem" }}
-          selection={selectedProducts}
-          onSelectionChange={(e) => setSelectedProducts(e.value)}
+          selection={selectedSongs}
+          onSelectionChange={(e) => setSelectedSongs(e.value)}
           paginator
           rows={10}
           rowsPerPageOptions={[5, 10, 25]}
           paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} songs"
           globalFilter={globalFilter}
         >
           <Column selectionMode="multiple" exportable={false}></Column>
           <Column expander={true}   />
           <Column field="name" header="Title" sortable />
           <Column
-            field="price"
+            field="artist"
             header="Artist"
             sortable
-            body={priceBodyTemplate}
+            body={artistBodyTemplate}
           />
-          <Column field="category" header="Progress" sortable />
+          <Column field="progress" header="Progress" sortable
+           body={progressBodyTemplate}/>
           <Column
             body={actionBodyTemplate}
             exportable={false}
@@ -394,13 +378,13 @@ const List  =  memo(() =>  {
           ></Column>
         </DataTable>
         <Dialog
-          visible={productDialog}
+          visible={songDialog}
           style={{ width: "32rem" }}
           breakpoints={{ "960px": "75vw", "641px": "90vw" }}
-          header="Product Details"
+          header="Song Details"
           modal
           className="p-fluid"
-          footer={productDialogFooter}
+          footer={songDialogFooter}
           onHide={hideDialog}
         >
 
@@ -410,15 +394,15 @@ const List  =  memo(() =>  {
             </label>
             <InputText
               id="name"
-              value={product.name}
+              value={song.name}
               onChange={(e) => onInputChange(e, "name")}
               required
               autoFocus
               className={classNames({
-                "p-invalid": submitted && !product.name,
+                "p-invalid": submitted && !song.name,
               })}
             />
-            {submitted && !product.name && (
+            {submitted && !song.name && (
               <small className="p-error">Name is required.</small>
             )}
           </div>
@@ -427,73 +411,67 @@ const List  =  memo(() =>  {
           <div className="field">
             <label className="mb-3 font-bold">Artist</label>
              <InputText
-               id="category"
-               value={product.name}
+               id="artist"
+               value={song.name}
                onChange={(e) => onInputChange(e, "name")}
                required
                autoFocus
                className={classNames({
-                 "p-invalid": submitted && !product.category,
+                 "p-invalid": submitted && !song.artist,
                })}
              />
           </div>
 
           <div className="formgrid grid">
             <div className="field col">
-              <label htmlFor="price" className="font-bold">
+              <label htmlFor="progress" className="font-bold">
                 Progress
               </label>
-              <InputNumber
-                id="price"
-                value={product.price}
-                onValueChange={(e) => onInputNumberChange(e, "price")}
-                mode="currency"
-                currency="USD"
-                locale="en-US"
-              />
+              <Progress level={ProgressEnum.NEW}/>
+
             </div>
           </div>
         </Dialog>
 
         <Dialog
-          visible={deleteProductDialog}
+          visible={deleteSongDialog}
           style={{ width: "24rem" }}
           breakpoints={{ "960px": "75vw", "641px": "90vw" }}
           header="Confirm"
           modal
-          footer={deleteProductDialogFooter}
-          onHide={hideDeleteProductDialog}
+          footer={deleteSongDialogFooter}
+          onHide={hideDeleteSongDialog}
         >
           <div className="confirmation-content">
             <i
               className="pi pi-exclamation-triangle mr-3"
               style={{ fontSize: "2rem" }}
             />
-            {product && (
+            {song && (
               <span>
-                Are you sure you want to delete <b>{product.name}</b>?
+                Are you sure you want to delete <b>{song.name}</b>?
               </span>
             )}
           </div>
         </Dialog>
 
         <Dialog
-          visible={deleteProductsDialog}
+          visible={deleteSongsDialog}
           style={{ width: "24rem" }}
           breakpoints={{ "960px": "75vw", "641px": "90vw" }}
           header="Confirm"
           modal
-          footer={deleteProductsDialogFooter}
-          onHide={hideDeleteProductsDialog}
+          footer={deleteSongsDialogFooter}
+          onHide={hideDeleteSongsDialog}
         >
           <div className="confirmation-content">
             <i
               className="pi pi-exclamation-triangle mr-3"
               style={{ fontSize: "2rem" }}
             />
-            {product && (
+            {song && (
               <span>
-                Are you sure you want to delete the selected products?
+                Are you sure you want to delete the selected songs?
               </span>
             )}
           </div>
