@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef , memo } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { SongService } from "./service/SongService";
+import { TabService } from "./service/TabService";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { Toolbar } from "primereact/toolbar";
@@ -11,6 +12,10 @@ import { Player } from "./Player";
 import { classNames } from "primereact/utils";
 import { ProgressEnum } from "../enums/ProgressEnum";
 import { Progress } from "./Progress";
+import { TabContent } from "./TabContent";
+
+import { Dropdown } from 'primereact/dropdown';
+
 
 const List  =  memo(() =>  {
   const [songs, setSongs] = useState([]);
@@ -21,8 +26,9 @@ const List  =  memo(() =>  {
     id: null,
     name: "",
     artist: "",
-    progress: ProgressEnum.NEW.value,
+   progress: 0,
   };
+  const [isNew, setIsNew] = useState(true)
   const [song, setSong] = useState(emptySong);
   const [songDialog, setSongDialog] = useState(false);
   const [deleteSongDialog, setDeleteSongDialog] = useState(false);
@@ -41,6 +47,7 @@ const List  =  memo(() =>  {
     setSong(emptySong);
     setSubmitted(false);
     setSongDialog(true);
+    setIsNew(true)
   };
 
   const hideDialog = () => {
@@ -90,10 +97,25 @@ const List  =  memo(() =>  {
     }
   };
 
-  const editSong = (song) => {
-    setSong({ ...song });
-    setSongDialog(true);
-  };
+const editSong = (songToEdit) => {
+   setIsNew(false)
+  // Normalize progress to a number (if it was an object before)
+  const progressValue =
+    typeof songToEdit.progress === "number"
+      ? songToEdit.progress
+      : songToEdit.progress?.level?.value || 0;
+
+  setSong({
+    ...songToEdit,
+    progress: progressValue,
+  });
+
+  setSongDialog(true);
+};
+
+
+
+
 
   const confirmDeleteSong = (song) => {
     setSong(song);
@@ -172,6 +194,15 @@ const List  =  memo(() =>  {
 
     setSong(_song);
   };
+
+const onProgressChange = (e) => {
+  setSong({
+    ...song,
+    progress: {
+      level: e.value, // e.value is one of the ProgressEnum values
+    },
+  });
+};
 
 
   const onRowExpand = (event) => {
@@ -266,9 +297,14 @@ const List  =  memo(() =>  {
     </React.Fragment>
   );
 
+ const [selectedProgress, setselectedProgress] = useState(null);
+    const progresses = Object.values(ProgressEnum); // {value, label, color}
+
+
 
 const progressBodyTemplate = (rowData) => {
-    return  <Progress level={ProgressEnum.NEW}/>
+    console.log(rowData, "<rowdata")
+    return  <Progress level={rowData.progress}/>
 }
 
   const searchBodyTemplate = () => {
@@ -284,12 +320,9 @@ const progressBodyTemplate = (rowData) => {
   };
 
   const rowExpansionTemplate = (data) => {
-    return (
-      <div className="p-3">
-        <h5>Orders for {data.name}</h5>
-         <div>tab</div>
-      </div>
-    );
+     //tab endpoint
+    const tabData = TabService.getTabData(data.tabUrl);
+    return <TabContent tabUrl={data.tabUrl} name={data.name} />;
   };
   const leftToolbarTemplate = () => {
     return (
@@ -332,11 +365,11 @@ const progressBodyTemplate = (rowData) => {
 
   return (
     <>
-      <div className="card">
+      <div className="">
         {!!url ? <Player url={url} /> : <p>no video loaded</p>}
       </div>
 
-      <div className="card">
+      <div className="">
         <Toast ref={toast} />
         <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar>
 
@@ -427,7 +460,19 @@ const progressBodyTemplate = (rowData) => {
               <label htmlFor="progress" className="font-bold">
                 Progress
               </label>
-              <Progress level={ProgressEnum.NEW}/>
+                <div>
+            <Dropdown
+              disabled={isNew}
+              value={song.progress}
+              onChange={(e) => setSong({ ...song, progress: e.value })}
+              options={progresses}
+              optionLabel="label"
+              optionValue="value" // 👈 makes it easier to bind to a number
+              placeholder="Select a level"
+              className="w-full md:w-14rem"
+            />
+
+                </div>
 
             </div>
           </div>
