@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef , memo } from "react";
 import { TabService } from "./service/TabService";
-
+import { DeferredContent } from 'primereact/deferredcontent';
 import { BlockUI } from 'primereact/blockui';
+import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
 
-
-export const TabContent = ({ tabUrl, name }) => {
+export const TabContent = ({ tabUrl, name, comment }) => {
   const [tabData, setTabData] = useState(null);
    const [blocked, setBlocked] = useState(true);
 
@@ -16,12 +16,23 @@ export const TabContent = ({ tabUrl, name }) => {
   }, [tabUrl]);
 
   return (
-     <BlockUI blocked={blocked} fullScreen >
-        <div className="p-3" style={stylesheet.tabDiv}>
-          <h5> {name}</h5>
-          <pre style={stylesheet.tabPrev}>{tabData}</pre>
-        </div>
-    </BlockUI>
+
+     (<BlockUI blocked={blocked} fullScreen >
+         <Inplace>
+           <InplaceDisplay>view comment</InplaceDisplay>
+           <InplaceContent>
+               <p className="m-0">
+                 {comment}
+               </p>
+           </InplaceContent>
+       </Inplace>
+          <DeferredContent  >
+            <div className="p-3" style={stylesheet.tabDiv}>
+              <h5> {name}</h5>
+              <pre style={stylesheet.tabPrev}>{tabData}</pre>
+            </div>
+          </DeferredContent>
+    </BlockUI>)
   );
 };
 

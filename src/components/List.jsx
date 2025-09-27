@@ -13,7 +13,7 @@ import { classNames } from "primereact/utils";
 import { ProgressEnum } from "../enums/ProgressEnum";
 import { Progress } from "./Progress";
 import { TabContent } from "./TabContent";
-
+import { ScrollTop } from 'primereact/scrolltop';
 import { Dropdown } from 'primereact/dropdown';
 
 
@@ -322,7 +322,7 @@ const progressBodyTemplate = (rowData) => {
   const rowExpansionTemplate = (data) => {
      //tab endpoint
     const tabData = TabService.getTabData(data.tabUrl);
-    return <TabContent tabUrl={data.tabUrl} name={data.name} />;
+    return <TabContent tabUrl={data.tabUrl} name={data.name}  comment={data.comment}/>;
   };
   const leftToolbarTemplate = () => {
     return (
@@ -364,7 +364,9 @@ const progressBodyTemplate = (rowData) => {
   };
 
   return (
+
     <>
+         <ScrollTop />
       <div className="">
         {!!url ? <Player url={url} /> : <p>no video loaded</p>}
       </div>
