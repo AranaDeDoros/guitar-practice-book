@@ -4,37 +4,35 @@ import { DeferredContent } from 'primereact/deferredcontent';
 import { BlockUI } from 'primereact/blockui';
 import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
 
-export const TabContent = ({ tabUrl, name, comment }) => {
+export const TabContent = ({ tabUrl, name, comment, tabService = TabService }) => {
   const [tabData, setTabData] = useState(null);
-   const [blocked, setBlocked] = useState(true);
+  const [blocked, setBlocked] = useState(true);
 
   useEffect(() => {
-    TabService.getTabData(tabUrl).then(data => {
+    tabService.getTabData(tabUrl).then(data => {
       setTabData(data);
-       setBlocked(false);
-    })
-  }, [tabUrl]);
+      setBlocked(false);
+    });
+  }, [tabUrl, tabService]);
 
   return (
-
-     (<BlockUI blocked={blocked} fullScreen >
-         <Inplace>
-           <InplaceDisplay>view comment</InplaceDisplay>
-           <InplaceContent>
-               <p className="m-0">
-                 {comment}
-               </p>
-           </InplaceContent>
-       </Inplace>
-          <DeferredContent  >
-            <div className="p-3" style={stylesheet.tabDiv}>
-              <h5> {name}</h5>
-              <pre style={stylesheet.tabPrev}>{tabData}</pre>
-            </div>
-          </DeferredContent>
-    </BlockUI>)
+    <BlockUI blocked={blocked} fullScreen>
+      <Inplace>
+        <InplaceDisplay>view comment</InplaceDisplay>
+        <InplaceContent>
+          <p className="m-0">{comment}</p>
+        </InplaceContent>
+      </Inplace>
+      <DeferredContent>
+        <div className="p-3" style={stylesheet.tabDiv}>
+          <h5>{name}</h5>
+          <pre style={stylesheet.tabPrev}>{tabData}</pre>
+        </div>
+      </DeferredContent>
+    </BlockUI>
   );
 };
+
 
 const stylesheet = {
   tabDiv : {

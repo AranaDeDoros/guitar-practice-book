@@ -215,6 +215,7 @@ const onProgressChange = (e) => {
   };
 
   const onRowCollapse = (event) => {
+    setUrl("");
     toast.current.show({
       severity: "success",
       summary: "Song Collapsed",
@@ -322,7 +323,7 @@ const progressBodyTemplate = (rowData) => {
   const rowExpansionTemplate = (data) => {
      //tab endpoint
     const tabData = TabService.getTabData(data.tabUrl);
-    return <TabContent tabUrl={data.tabUrl} name={data.name}  comment={data.comment}/>;
+    return <TabContent tabUrl={data.tabUrl} name={data.name}  comment={data.comment} tabService={TabService}/>;
   };
   const leftToolbarTemplate = () => {
     return (
@@ -363,6 +364,10 @@ const progressBodyTemplate = (rowData) => {
     setUrl("https://www.youtube.com/embed/R5MOaLXie2k?si=Z09jQzTiTKHuHT_w");
   };
 
+    const onRowUnselect = (ev) => {
+    setUrl("")
+  }
+
   return (
 
     <>
@@ -382,6 +387,7 @@ const progressBodyTemplate = (rowData) => {
           onRowExpand={onRowExpand}
           onRowCollapse={onRowCollapse}
           onRowClick={onRowClick}
+          onRowUnselect={onRowUnselect}
           rowExpansionTemplate={rowExpansionTemplate}
           dataKey="id"
           header={header}

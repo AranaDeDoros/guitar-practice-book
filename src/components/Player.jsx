@@ -1,6 +1,7 @@
 import { Panel } from "primereact/panel";
+import PropTypes from 'prop-types';
 
-export  function Player(props) {
+export function Player(props) {
 
   return (
     <>
@@ -21,3 +22,6 @@ export  function Player(props) {
     </>
   );
 }
+Player.propTypes = {
+  url: PropTypes.string,
+};
