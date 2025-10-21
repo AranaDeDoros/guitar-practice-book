@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef , memo } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { SongService } from "./service/SongService";
-import { TabService } from "./service/TabService";
+import { SongService } from "../service/SongService";
+import { TabService } from "../service/TabService";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { Toolbar } from "primereact/toolbar";

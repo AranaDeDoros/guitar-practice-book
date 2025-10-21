@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef , memo } from "react";
-import { TabService } from "./service/TabService";
+import { TabService } from "../service/TabService";
 import { DeferredContent } from 'primereact/deferredcontent';
 import { BlockUI } from 'primereact/blockui';
 import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
