@@ -7,7 +7,7 @@ export const SongService = {
        progress:50,
        name: "teenage blues",
        artist: "Dreamgrill",
-       orders: [
+       tabs: [
          {
            id: "1009-0",
            tabUrl: "https://tabs.ultimate-guitar.com/tab/dreamgirl/teenage-blue-tabs-3131648",

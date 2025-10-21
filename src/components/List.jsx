@@ -317,7 +317,7 @@ const progressBodyTemplate = (rowData) => {
   };
 
   const allowExpansion = (rowData) => {
-    return rowData.orders.length > 0;
+    return rowData.tabs.length > 0;
   };
 
   const rowExpansionTemplate = (data) => {
