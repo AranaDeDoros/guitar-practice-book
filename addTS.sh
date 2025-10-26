@@ -1,4 +1,7 @@
+#add typescript to existing react project
 npm install --save-dev typescript @types/react @types/react-dom
+
+#add this to tsconfig.json; allowJs, well alows for a transition between JS to TS
 {
   "compilerOptions": {
     "target": "ESNext",
@@ -19,4 +22,6 @@ npm install --save-dev typescript @types/react @types/react-dom
   },
   "include": ["src"]
 }
+
+#extra: rename files on src/ from jsx to tsx
 find src -name "*.jsx" -exec bash -c 'mv "$0" "${0%.jsx}.tsx"' {} \;

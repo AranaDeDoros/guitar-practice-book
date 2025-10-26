@@ -2,6 +2,7 @@ import type { SongDTO } from "../../dtos/SongDTO";
 
 import type { TabDTO } from "../../dtos/TabDTO";
 import { SongCreateDTO } from "../dtos/SongCreateDTO";
+import { SongDeleteDTO } from "../dtos/SongDeleteDTO";
 import { SongUpdateDTO } from "../dtos/SongUpdateDTO";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
@@ -59,9 +60,9 @@ export const SongService = {
       return false;
     }
   },
-  async deleteSong(song: SongCreateDTO): Promise<boolean> {
+  async deleteSong(song: SongDeleteDTO): Promise<boolean> {
     try {
-      const response = await fetch(`${BACKEND_URL}/songs/store`, {
+      const response = await fetch(`${BACKEND_URL}/songs/${song.id}/delete`, {
         method: "POST",
         body: JSON.stringify(song),
       });
