@@ -66,7 +66,7 @@ const List  =  memo(() =>  {
   const saveSong = () => {
     setSubmitted(true);
 
-    if (song.name) {
+    if (song.title) {
       let _songs = [...songs];
       let _song = { ...song };
 
@@ -80,6 +80,7 @@ const List  =  memo(() =>  {
           detail: "Song Updated",
           life: 3000,
         });
+        //update
       } else {
         _song.id = createId();
         _songs.push(_song);
@@ -89,6 +90,7 @@ const List  =  memo(() =>  {
           detail: "Song Created",
           life: 3000,
         });
+        //create
       }
 
       setSongs(_songs);
@@ -209,7 +211,7 @@ const onProgressChange = (e) => {
     toast.current.show({
       severity: "info",
       summary: "Song Expanded",
-      detail: event.data.name,
+      detail: event.data.title,
       life: 3000,
     });
   };
@@ -219,7 +221,7 @@ const onProgressChange = (e) => {
     toast.current.show({
       severity: "success",
       summary: "Song Collapsed",
-      detail: event.data.name,
+      detail: event.data.title,
       life: 3000,
     });
   };
@@ -323,7 +325,7 @@ const progressBodyTemplate = (rowData) => {
   const rowExpansionTemplate = (data) => {
      //tab endpoint
     const tabData = TabService.getTabData(data.tabUrl);
-    return <TabContent tabUrl={data.tabUrl} name={data.name}  comment={data.comment} tabService={TabService}/>;
+    return <TabContent tabUrl={data.tabUrl} name={data.title}  comment={data.comment} tabService={TabService}/>;
   };
   const leftToolbarTemplate = () => {
     return (
@@ -403,7 +405,7 @@ const progressBodyTemplate = (rowData) => {
         >
           <Column selectionMode="multiple" exportable={false}></Column>
           <Column expander={true}   />
-          <Column field="name" header="Title" sortable />
+          <Column field="title" header="Title" sortable />
           <Column
             field="artist"
             header="Artist"
@@ -435,15 +437,15 @@ const progressBodyTemplate = (rowData) => {
             </label>
             <InputText
               id="name"
-              value={song.name}
+              value={song.title}
               onChange={(e) => onInputChange(e, "name")}
               required
               autoFocus
               className={classNames({
-                "p-invalid": submitted && !song.name,
+                "p-invalid": submitted && !song.title,
               })}
             />
-            {submitted && !song.name && (
+            {submitted && !song.title && (
               <small className="p-error">Name is required.</small>
             )}
           </div>
@@ -453,7 +455,7 @@ const progressBodyTemplate = (rowData) => {
             <label className="mb-3 font-bold">Artist</label>
              <InputText
                id="artist"
-               value={song.name}
+               value={song.artist}
                onChange={(e) => onInputChange(e, "name")}
                required
                autoFocus
@@ -502,7 +504,7 @@ const progressBodyTemplate = (rowData) => {
             />
             {song && (
               <span>
-                Are you sure you want to delete <b>{song.name}</b>?
+                Are you sure you want to delete <b>{song.title}</b>?
               </span>
             )}
           </div>

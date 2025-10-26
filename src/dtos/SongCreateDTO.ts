@@ -1,6 +1,5 @@
 import { TabDTO } from "./TabDTO";
-export interface SongDTO {
-  id: string;
+export interface SongCreateDTO {
   title: string;
   artist: string;
   video: string;
