@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef , memo } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { SongService } from "../service/SongService";
@@ -13,22 +13,26 @@ import { classNames } from "primereact/utils";
 import { ProgressEnum } from "../enums/ProgressEnum";
 import { Progress } from "./Progress";
 import { TabContent } from "./TabContent";
-import { ScrollTop } from 'primereact/scrolltop';
-import { Dropdown } from 'primereact/dropdown';
+import { ScrollTop } from "primereact/scrolltop";
+import { Dropdown } from "primereact/dropdown";
+import { SongCreateDTO } from "../dtos/SongCreateDTO";
+import { SongDeleteDTO } from "../dtos/SongDeleteDTO";
+import { SongUpdateDTO } from "../dtos/SongUpdateDTO";
 
-
-const List  =  memo(() =>  {
+const List = memo(() => {
   const [songs, setSongs] = useState([]);
   const [expandedRows, setExpandedRows] = useState(null);
   const toast = useRef(null);
   const [url, setUrl] = useState("");
   let emptySong = {
     id: null,
-    name: "",
+    title: "",
     artist: "",
-   progress: 0,
+    video: "",
+    tab: {},
+    progress: 0,
   };
-  const [isNew, setIsNew] = useState(true)
+  const [isNew, setIsNew] = useState(true);
   const [song, setSong] = useState(emptySong);
   const [songDialog, setSongDialog] = useState(false);
   const [deleteSongDialog, setDeleteSongDialog] = useState(false);
@@ -37,17 +41,14 @@ const List  =  memo(() =>  {
   const [submitted, setSubmitted] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   useEffect(() => {
-    SongService.getSongs().then((data) =>
-      setSongs(data)
-    );
+    SongService.getSongs().then((data) => setSongs(data));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
 
   const openNew = () => {
     setSong(emptySong);
     setSubmitted(false);
     setSongDialog(true);
-    setIsNew(true)
+    setIsNew(true);
   };
 
   const hideDialog = () => {
@@ -63,7 +64,7 @@ const List  =  memo(() =>  {
     setDeleteSongsDialog(false);
   };
 
-  const saveSong = () => {
+  const saveSong = async () => {
     setSubmitted(true);
 
     if (song.title) {
@@ -81,6 +82,28 @@ const List  =  memo(() =>  {
           life: 3000,
         });
         //update
+        const dto = {
+          id: _song.id,
+          progress: _song.progress,
+        };
+        try {
+          const serv = await SongService.updateSong(dto);
+          if (serv) {
+            toast.current.show({
+              severity: "success",
+              summary: "Successful",
+              detail: "Song Created",
+              life: 3000,
+            });
+          }
+        } catch (error) {
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: error.message,
+            life: 3000,
+          });
+        }
       } else {
         _song.id = createId();
         _songs.push(_song);
@@ -91,6 +114,32 @@ const List  =  memo(() =>  {
           life: 3000,
         });
         //create
+        try {
+          const dto = {
+            title: _song.title,
+            artist: _song.artist,
+            video: _song.video,
+            tab: _song.tab,
+            progress: _song.progress,
+          };
+
+          const serv = await SongService.createSong(dto);
+          if (serv) {
+            toast.current.show({
+              severity: "success",
+              summary: "Successful",
+              detail: "Song Created",
+              life: 3000,
+            });
+          }
+        } catch (error) {
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: error.message,
+            life: 3000,
+          });
+        }
       }
 
       setSongs(_songs);
@@ -99,25 +148,21 @@ const List  =  memo(() =>  {
     }
   };
 
-const editSong = (songToEdit) => {
-   setIsNew(false)
-  // Normalize progress to a number (if it was an object before)
-  const progressValue =
-    typeof songToEdit.progress === "number"
-      ? songToEdit.progress
-      : songToEdit.progress?.level?.value || 0;
+  const editSong = (songToEdit) => {
+    setIsNew(false);
+    // Normalize progress to a number (if it was an object before)
+    const progressValue =
+      typeof songToEdit.progress === "number"
+        ? songToEdit.progress
+        : songToEdit.progress?.level?.value || 0;
 
-  setSong({
-    ...songToEdit,
-    progress: progressValue,
-  });
+    setSong({
+      ...songToEdit,
+      progress: progressValue,
+    });
 
-  setSongDialog(true);
-};
-
-
-
-
+    setSongDialog(true);
+  };
 
   const confirmDeleteSong = (song) => {
     setSong(song);
@@ -197,15 +242,14 @@ const editSong = (songToEdit) => {
     setSong(_song);
   };
 
-const onProgressChange = (e) => {
-  setSong({
-    ...song,
-    progress: {
-      level: e.value, // e.value is one of the ProgressEnum values
-    },
-  });
-};
-
+  const onProgressChange = (e) => {
+    setSong({
+      ...song,
+      progress: {
+        level: e.value, // e.value is one of the ProgressEnum values
+      },
+    });
+  };
 
   const onRowExpand = (event) => {
     toast.current.show({
@@ -259,7 +303,6 @@ const onProgressChange = (e) => {
     );
   };
 
-
   const songDialogFooter = (
     <React.Fragment>
       <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
@@ -300,22 +343,20 @@ const onProgressChange = (e) => {
     </React.Fragment>
   );
 
- const [selectedProgress, setselectedProgress] = useState(null);
-    const progresses = Object.values(ProgressEnum); // {value, label, color}
+  const [selectedProgress, setselectedProgress] = useState(null);
+  const progresses = Object.values(ProgressEnum); // {value, label, color}
 
-
-
-const progressBodyTemplate = (rowData) => {
-    console.log(rowData, "<rowdata")
-    return  <Progress level={rowData.progress}/>
-}
+  const progressBodyTemplate = (rowData) => {
+    console.log(rowData, "<rowdata");
+    return <Progress level={rowData.progress} />;
+  };
 
   const searchBodyTemplate = () => {
     return <Button icon="pi pi-search" />;
   };
 
   const artistBodyTemplate = (rowData) => {
-    return (rowData.artist);
+    return rowData.artist;
   };
 
   const allowExpansion = (rowData) => {
@@ -323,9 +364,16 @@ const progressBodyTemplate = (rowData) => {
   };
 
   const rowExpansionTemplate = (data) => {
-     //tab endpoint
+    //tab endpoint
     const tabData = TabService.getTabData(data.tabUrl);
-    return <TabContent tabUrl={data.tabUrl} name={data.title}  comment={data.comment} tabService={TabService}/>;
+    return (
+      <TabContent
+        tabUrl={data.tabUrl}
+        name={data.title}
+        comment={data.comment}
+        tabService={TabService}
+      />
+    );
   };
   const leftToolbarTemplate = () => {
     return (
@@ -336,7 +384,7 @@ const progressBodyTemplate = (rowData) => {
           severity="success"
           onClick={openNew}
           className="btn"
-         style={{ ...stylesheet.btn, ...stylesheet.new }}
+          style={{ ...stylesheet.btn, ...stylesheet.new }}
         />
         <Button
           label="Delete"
@@ -366,14 +414,13 @@ const progressBodyTemplate = (rowData) => {
     setUrl("https://www.youtube.com/embed/R5MOaLXie2k?si=Z09jQzTiTKHuHT_w");
   };
 
-    const onRowUnselect = (ev) => {
-    setUrl("")
-  }
+  const onRowUnselect = (ev) => {
+    setUrl("");
+  };
 
   return (
-
     <>
-         <ScrollTop />
+      <ScrollTop />
       <div className="">
         {!!url ? <Player url={url} /> : <p>no video loaded</p>}
       </div>
@@ -404,7 +451,7 @@ const progressBodyTemplate = (rowData) => {
           globalFilter={globalFilter}
         >
           <Column selectionMode="multiple" exportable={false}></Column>
-          <Column expander={true}   />
+          <Column expander={true} />
           <Column field="title" header="Title" sortable />
           <Column
             field="artist"
@@ -412,8 +459,12 @@ const progressBodyTemplate = (rowData) => {
             sortable
             body={artistBodyTemplate}
           />
-          <Column field="progress" header="Progress" sortable
-           body={progressBodyTemplate}/>
+          <Column
+            field="progress"
+            header="Progress"
+            sortable
+            body={progressBodyTemplate}
+          />
           <Column
             body={actionBodyTemplate}
             exportable={false}
@@ -430,7 +481,6 @@ const progressBodyTemplate = (rowData) => {
           footer={songDialogFooter}
           onHide={hideDialog}
         >
-
           <div className="field">
             <label htmlFor="name" className="font-bold">
               Title
@@ -450,19 +500,18 @@ const progressBodyTemplate = (rowData) => {
             )}
           </div>
 
-
           <div className="field">
             <label className="mb-3 font-bold">Artist</label>
-             <InputText
-               id="artist"
-               value={song.artist}
-               onChange={(e) => onInputChange(e, "name")}
-               required
-               autoFocus
-               className={classNames({
-                 "p-invalid": submitted && !song.artist,
-               })}
-             />
+            <InputText
+              id="artist"
+              value={song.artist}
+              onChange={(e) => onInputChange(e, "name")}
+              required
+              autoFocus
+              className={classNames({
+                "p-invalid": submitted && !song.artist,
+              })}
+            />
           </div>
 
           <div className="formgrid grid">
@@ -470,20 +519,18 @@ const progressBodyTemplate = (rowData) => {
               <label htmlFor="progress" className="font-bold">
                 Progress
               </label>
-                <div>
-            <Dropdown
-              disabled={isNew}
-              value={song.progress}
-              onChange={(e) => setSong({ ...song, progress: e.value })}
-              options={progresses}
-              optionLabel="label"
-              optionValue="value" // 👈 makes it easier to bind to a number
-              placeholder="Select a level"
-              className="w-full md:w-14rem"
-            />
-
-                </div>
-
+              <div>
+                <Dropdown
+                  disabled={isNew}
+                  value={song.progress}
+                  onChange={(e) => setSong({ ...song, progress: e.value })}
+                  options={progresses}
+                  optionLabel="label"
+                  optionValue="value" // 👈 makes it easier to bind to a number
+                  placeholder="Select a level"
+                  className="w-full md:w-14rem"
+                />
+              </div>
             </div>
           </div>
         </Dialog>
@@ -525,28 +572,26 @@ const progressBodyTemplate = (rowData) => {
               style={{ fontSize: "2rem" }}
             />
             {song && (
-              <span>
-                Are you sure you want to delete the selected songs?
-              </span>
+              <span>Are you sure you want to delete the selected songs?</span>
             )}
           </div>
         </Dialog>
       </div>
     </>
   );
-})
+});
 
 const stylesheet = {
-    btn : {
-        padding: '10px',
-        fontSize: '1rem'
-    },
-    new:{
-        backgroundColor : '#25788f',
-        border: "1px solid #25788f"
-    },
-    delete: {
-        backgroundColor : '#ef4444',
-    }
-}
+  btn: {
+    padding: "10px",
+    fontSize: "1rem",
+  },
+  new: {
+    backgroundColor: "#25788f",
+    border: "1px solid #25788f",
+  },
+  delete: {
+    backgroundColor: "#ef4444",
+  },
+};
 export default List;
