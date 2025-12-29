@@ -1,5 +1,12 @@
-# Guitar Notebook 
-React app for managing guitar practice songs.
+# SessionBook
+
+<p align="center">
+  <img height="400" alt="sessionbook" src="https://github.com/user-attachments/assets/52d76087-872c-46a7-932e-b17fe6c5e178" />
+</p>
+
+<p align="center">React app for managing guitar practice songs.</p>
+
+
 
 ## Frontend Architecture
 - React
