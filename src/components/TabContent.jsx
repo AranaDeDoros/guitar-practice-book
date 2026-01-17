@@ -1,24 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useDeferredValue } from "react";
 import { TabService } from "../service/TabService";
 import { DeferredContent } from "primereact/deferredcontent";
 import { BlockUI } from "primereact/blockui";
 import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
 
-export const TabContent = ({
-  tabUrl,
-  name,
-  comment,
-  tabService = TabService,
-}) => {
+export const TabContent = ({ tab, name, comment, tabService = TabService }) => {
   const [tabData, setTabData] = useState(null);
   const [blocked, setBlocked] = useState(true);
-
+  //if it's still slow, render in chunks
+  const deferredTabData = useDeferredValue(tabData);
   useEffect(() => {
-    tabService.getTabData(tabUrl).then((data) => {
+    tabService.getTabData(tab.url).then((data) => {
       setTabData(data);
       setBlocked(false);
     });
-  }, [tabUrl, tabService]);
+  }, [tab, tabService]);
 
   return (
     <BlockUI blocked={blocked} fullScreen>
@@ -31,7 +27,7 @@ export const TabContent = ({
       <DeferredContent>
         <div className="p-3" style={stylesheet.tabDiv}>
           <h5>{name}</h5>
-          <pre style={stylesheet.tabPrev}>{tabData}</pre>
+          <pre style={stylesheet.tabPrev}>{deferredTabData}</pre>
         </div>
       </DeferredContent>
     </BlockUI>

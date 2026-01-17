@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef, memo } from "react";
+import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { SongService } from "../service/SongService";
-import { TabService } from "../service/TabService";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { Toolbar } from "primereact/toolbar";
@@ -363,18 +362,12 @@ const List = memo(() => {
     return rowData.tabs.length > 0;
   };
 
-  const rowExpansionTemplate = (data) => {
-    //tab endpoint
-    const tabData = TabService.getTabData(data.tabUrl);
-    return (
-      <TabContent
-        tabUrl={data.tabUrl}
-        name={data.title}
-        comment={data.comment}
-        tabService={TabService}
-      />
-    );
-  };
+  const rowExpansionTemplate = useCallback(
+    (data) => (
+      <TabContent tab={data.tab} name={data.title} comment={data.comment} />
+    ),
+    [],
+  );
   const leftToolbarTemplate = () => {
     return (
       <div className="flex flex-wrap gap-2">
