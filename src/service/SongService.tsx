@@ -1,5 +1,4 @@
-import type { SongDTO } from "../../dtos/SongDTO";
-import type { TabDTO } from "../../dtos/TabDTO";
+import { SongDTO } from "../dtos/SongDTO";
 import { SongCreateDTO } from "../dtos/SongCreateDTO";
 import { SongDeleteDTO } from "../dtos/SongDeleteDTO";
 import { SongUpdateDTO } from "../dtos/SongUpdateDTO";

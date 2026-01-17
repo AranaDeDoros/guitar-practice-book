@@ -15,9 +15,9 @@ import { Progress } from "./Progress";
 import { TabContent } from "./TabContent";
 import { ScrollTop } from "primereact/scrolltop";
 import { Dropdown } from "primereact/dropdown";
-import { SongCreateDTO } from "../dtos/SongCreateDTO";
+/* import { SongCreateDTO } from "../dtos/SongCreateDTO";
 import { SongDeleteDTO } from "../dtos/SongDeleteDTO";
-import { SongUpdateDTO } from "../dtos/SongUpdateDTO";
+import { SongUpdateDTO } from "../dtos/SongUpdateDTO"; */
 
 const List = memo(() => {
   const [songs, setSongs] = useState([]);
@@ -422,7 +422,7 @@ const List = memo(() => {
     <>
       <ScrollTop />
       <div className="">
-        {!!url ? <Player url={url} /> : <p>no video loaded</p>}
+        {url ? <Player url={url} /> : <p>no video loaded</p>}
       </div>
 
       <div className="">

@@ -1,15 +1,20 @@
-import React, { useState, useEffect, useRef , memo } from "react";
+import { useState, useEffect } from "react";
 import { TabService } from "../service/TabService";
-import { DeferredContent } from 'primereact/deferredcontent';
-import { BlockUI } from 'primereact/blockui';
-import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
+import { DeferredContent } from "primereact/deferredcontent";
+import { BlockUI } from "primereact/blockui";
+import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
 
-export const TabContent = ({ tabUrl, name, comment, tabService = TabService }) => {
+export const TabContent = ({
+  tabUrl,
+  name,
+  comment,
+  tabService = TabService,
+}) => {
   const [tabData, setTabData] = useState(null);
   const [blocked, setBlocked] = useState(true);
 
   useEffect(() => {
-    tabService.getTabData(tabUrl).then(data => {
+    tabService.getTabData(tabUrl).then((data) => {
       setTabData(data);
       setBlocked(false);
     });
@@ -33,14 +38,12 @@ export const TabContent = ({ tabUrl, name, comment, tabService = TabService }) =
   );
 };
 
-
 const stylesheet = {
-  tabDiv : {
-
-         overflow: "scroll"
+  tabDiv: {
+    overflow: "scroll",
   },
 
-  tabPrev : {
-         height: "200px",
-  }
-}
+  tabPrev: {
+    height: "200px",
+  },
+};
