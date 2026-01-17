@@ -1,8 +1,9 @@
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
 export const TabService = {
   async getTabData(requestDTO) {
+    console.log("Fetching tab data with request:", requestDTO);
     try {
-      const tabReq = await fetch(`${BACKEND_URL}/api/scrape/tab`, {
+      const tabReq = await fetch(`${BACKEND_URL}/scrape/tab`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

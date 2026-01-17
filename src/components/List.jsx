@@ -355,7 +355,7 @@ const List = memo(() => {
   };
 
   const artistBodyTemplate = (rowData) => {
-    return rowData.artist;
+    return rowData.artist.name;
   };
 
   const allowExpansion = (rowData) => {
@@ -418,7 +418,7 @@ const List = memo(() => {
         {url ? <Player url={url} /> : <p>no video loaded</p>}
       </div>
 
-      <div className="">
+      <div className="main-table">
         <Toast ref={toast} />
         <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar>
 
@@ -459,6 +459,7 @@ const List = memo(() => {
             body={progressBodyTemplate}
           />
           <Column
+            className="actions-column"
             body={actionBodyTemplate}
             exportable={false}
             style={{ minWidth: "12rem" }}
@@ -497,12 +498,12 @@ const List = memo(() => {
             <label className="mb-3 font-bold">Artist</label>
             <InputText
               id="artist"
-              value={song.artist}
+              value={song.artist.name}
               onChange={(e) => onInputChange(e, "name")}
               required
               autoFocus
               className={classNames({
-                "p-invalid": submitted && !song.artist,
+                "p-invalid": submitted && !song.artist.name,
               })}
             />
           </div>
@@ -576,15 +577,21 @@ const List = memo(() => {
 
 const stylesheet = {
   btn: {
-    padding: "10px",
-    fontSize: "1rem",
+    padding: "10px 14px",
+    fontSize: "0.95rem",
+    borderRadius: "10px",
+    fontWeight: 600,
   },
   new: {
-    backgroundColor: "#25788f",
-    border: "1px solid #25788f",
+    backgroundColor: "#6db23f",
+    border: "1px solid #6db23f",
+    color: "#ffffff",
   },
   delete: {
     backgroundColor: "#ef4444",
+    border: "1px solid #ef4444",
+    color: "#ffffff",
   },
 };
+
 export default List;

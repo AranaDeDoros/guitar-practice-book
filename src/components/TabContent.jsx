@@ -4,11 +4,13 @@ import { DeferredContent } from "primereact/deferredcontent";
 import { BlockUI } from "primereact/blockui";
 import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
 
-export const TabContent = ({ tab, name, comment, tabService = TabService }) => {
+export const TabContent = ({ tab, name, comment = "" }) => {
   const [tabData, setTabData] = useState(null);
   const [blocked, setBlocked] = useState(true);
+  const tabService = TabService;
   //if it's still slow, render in chunks
   const deferredTabData = useDeferredValue(tabData);
+  console.log(tab, name, comment);
   useEffect(() => {
     tabService.getTabData(tab.url).then((data) => {
       setTabData(data);
