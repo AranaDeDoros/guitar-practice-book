@@ -1,8 +1,9 @@
-import { TabDTO } from "./TabDTO";
 export interface SongCreateDTO {
+  id: string;
   title: string;
   artist: string;
   video: string;
-  tab: TabDTO;
+  tab: string;
+  comment: string;
   progress: number;
 }

@@ -1,5 +1,5 @@
 export interface TabDTO {
   id: string;
-  tabUrl: string;
+  url: string;
   comment: string;
 }
