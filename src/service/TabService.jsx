@@ -1,4 +1,6 @@
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
+import { Config } from "../Config";
+
+const BACKEND_URL = Config.BACKENDURL;
 export const TabService = {
   async getTabData(requestDTO) {
     console.log("Fetching tab data with request:", requestDTO);

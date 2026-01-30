@@ -2,8 +2,9 @@ import { SongDTO } from "../dtos/SongDTO";
 import { SongCreateDTO } from "../dtos/SongCreateDTO";
 import { SongDeleteDTO } from "../dtos/SongDeleteDTO";
 import { SongUpdateDTO } from "../dtos/SongUpdateDTO";
+import { Config } from "../Config";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
+const BACKEND_URL = Config.BACKENDURL;
 
 export const SongService = {
   async getSongs(): Promise<SongDTO[]> {
