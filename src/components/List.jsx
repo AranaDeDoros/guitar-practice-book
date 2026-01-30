@@ -370,7 +370,7 @@ const List = memo(() => {
   );
   const leftToolbarTemplate = () => {
     return (
-      <div className="flex flex-wrap gap-2">
+      <div className="left-toolbar">
         <Button
           label="New"
           icon="pi pi-plus"
@@ -520,7 +520,7 @@ const List = memo(() => {
                   onChange={(e) => setSong({ ...song, progress: e.value })}
                   options={progresses}
                   optionLabel="label"
-                  optionValue="value" // 👈 makes it easier to bind to a number
+                  optionValue="value"
                   placeholder="Select a level"
                   className="w-full md:w-14rem"
                 />

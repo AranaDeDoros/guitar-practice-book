@@ -138,3 +138,8 @@ iframe {
   background: #850731;
   color: white;
 }
+
+.left-toolbar {
+  display: flex;
+  gap: 1rem;
+}
