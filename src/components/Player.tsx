@@ -1,8 +1,11 @@
 import { Panel } from "primereact/panel";
-import PropTypes from 'prop-types';
+import { JSX } from "react";
 
-export function Player(props) {
+interface PlayerProps {
+  url?: string;
+}
 
+export function Player(props: PlayerProps): JSX.Element {
   return (
     <>
       <Panel>
@@ -22,6 +25,3 @@ export function Player(props) {
     </>
   );
 }
-Player.propTypes = {
-  url: PropTypes.string,
-};

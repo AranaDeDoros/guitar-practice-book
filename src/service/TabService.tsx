@@ -1,8 +1,9 @@
 import { Config } from "../Config";
+import { TabRequestDTO } from "../dtos/TabRequest";
 
 const BACKEND_URL = Config.BACKENDURL;
 export const TabService = {
-  async getTabData(requestDTO) {
+  async getTabData(requestDTO: TabRequestDTO): Promise<string> {
     console.log("Fetching tab data with request:", requestDTO);
     try {
       const tabReq = await fetch(`${BACKEND_URL}/scrape/tab`, {
@@ -16,7 +17,7 @@ export const TabService = {
       return tab;
     } catch (err) {
       console.log("Error fetching tab data:", err);
-      return;
+      return "";
     }
   },
 };

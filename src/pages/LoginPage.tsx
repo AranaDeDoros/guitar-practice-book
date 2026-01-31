@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { Transition } from "@headlessui/react";
 import { UserCircleIcon, KeyIcon } from "@heroicons/react/24/solid";
+import { JSX } from "react";
 // import { useAuthStore } from "./stores/authStore"; // optional
 
-export default function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+export default function LoginPage(): JSX.Element {
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   // const login = useAuthStore((s) => s.login);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -19,8 +20,8 @@ export default function LoginPage() {
     try {
       //call
       await new Promise((r) => setTimeout(r, 800));
-    } catch (err) {
-      setError("Invalid username or password", err);
+    } catch (err: any) {
+      setError("Invalid username or password");
     } finally {
       setLoading(false);
     }
