@@ -3,16 +3,34 @@ import { TabService } from "../service/TabService";
 import { DeferredContent } from "primereact/deferredcontent";
 import { BlockUI } from "primereact/blockui";
 import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
+import { TabDTO } from "../dtos/TabDTO";
+import { JSX } from "react";
+import { TabRequestDTO } from "../dtos/TabRequest";
+import { TabSource } from "../enums/TabSourceEnum";
 
-export const TabContent = ({ tab, name, comment = "" }) => {
-  const [tabData, setTabData] = useState(null);
+interface TabContentProps {
+  tab: TabDTO;
+  name: string;
+  comment?: string;
+}
+
+export const TabContent = ({
+  tab,
+  name,
+  comment = "",
+}: TabContentProps): JSX.Element => {
+  const [tabData, setTabData] = useState<string | null>(null);
   const [blocked, setBlocked] = useState(true);
   const tabService = TabService;
   //if it's still slow, render in chunks
   const deferredTabData = useDeferredValue(tabData);
   console.log(tab, name, comment);
   useEffect(() => {
-    tabService.getTabData(tab.url).then((data) => {
+    const requestDTO: TabRequestDTO = {
+      tab: tab,
+      source: TabSource.ULTIMATE_GUITAR,
+    };
+    tabService.getTabData(requestDTO).then((data) => {
       setTabData(data);
       setBlocked(false);
     });
