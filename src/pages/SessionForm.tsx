@@ -1,19 +1,41 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { Transition } from "@headlessui/react";
-import { UserCircleIcon, KeyIcon } from "@heroicons/react/24/solid";
+import { MusicalNoteIcon, SlashIcon } from "@heroicons/react/24/solid";
 import { JSX } from "react";
+import CatalogueSelect from "../components/CatalogueSelect";
+import { Song, SongOption } from "../types/Session";
 export default function SessionForm(): JSX.Element {
   const [sessionName, setSessionName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const sessionNameRef = useRef<HTMLInputElement>(null);
-
+  const { data: songs, isLoading } = { data: [], isLoading: false }; //useSongs(token);
+  const [selectedSongs, setSelectedSongs] = useState([]);
+  const defaultObj = {
+    name: "",
+    description: "",
+    songs: [],
+  };
+  const [formData, setFormData] = useState(defaultObj);
   useEffect(() => {
     if (sessionNameRef.current) {
       sessionNameRef.current.focus();
     }
   }, []);
+
+  const songSelectMapper: (song: Song) => SongOption = useCallback(
+    (song: Song) => ({
+      value: song.id,
+      label: song.title,
+    }),
+    [],
+  );
+
+  const songOptions = useMemo(() => {
+    if (!songs) return [];
+    return songs.map(songSelectMapper);
+  }, [songs, songSelectMapper]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100">
@@ -33,7 +55,7 @@ export default function SessionForm(): JSX.Element {
         {/* sessionName */}
         <div className="mb-3 w-full">
           <div className="relative">
-            {/* <UserCircleIcon className="size-6 text-sky-600 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" /> */}
+            <MusicalNoteIcon className="size-6 text-sky-600 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               ref={sessionNameRef}
               type="text"
@@ -54,7 +76,7 @@ export default function SessionForm(): JSX.Element {
         {/* description */}
         <div className="mb-4 w-full">
           <div className="relative">
-            {/* <KeyIcon className="size-6 text-sky-600 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" /> */}
+            <SlashIcon className="size-6 text-sky-600 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
             <textarea
               autoComplete="current-description"
               placeholder="description"
@@ -69,6 +91,26 @@ export default function SessionForm(): JSX.Element {
               required
             />
           </div>
+        </div>
+
+        <div className="mb-1">
+          <label className="block text-sm font-medium text-gray-700">
+            Songs
+          </label>
+          <CatalogueSelect
+            catalog={songOptions}
+            isLoading={isLoading}
+            value={selectedSongs}
+            onChange={(values) => {
+              setSelectedSongs(values);
+              setFormData((prev) => ({
+                ...prev,
+                songs: values.map((v: SongOption) => v.value),
+              }));
+            }}
+            placeholder="Add songs..."
+            isMulti={true}
+          />
         </div>
 
         {/* Error message */}
@@ -99,7 +141,6 @@ export default function SessionForm(): JSX.Element {
         >
           {loading ? "Creating..." : "Create"}
         </button>
-        {/* existing songs select here and/or button to create a new one */}
       </form>
     </div>
   );
