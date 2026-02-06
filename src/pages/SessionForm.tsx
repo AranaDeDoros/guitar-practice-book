@@ -3,7 +3,8 @@ import { Transition } from "@headlessui/react";
 import { MusicalNoteIcon, SlashIcon } from "@heroicons/react/24/solid";
 import { JSX } from "react";
 import CatalogueSelect from "../components/CatalogueSelect";
-import { Song, SongOption } from "../domain/types/Session";
+import { SongOption } from "../domain/types/Session";
+import { SongDTO } from "../domain/types/SongDTO";
 export default function SessionForm(): JSX.Element {
   const [sessionName, setSessionName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -24,8 +25,8 @@ export default function SessionForm(): JSX.Element {
     }
   }, []);
 
-  const songSelectMapper: (song: Song) => SongOption = useCallback(
-    (song: Song) => ({
+  const songSelectMapper: (song: SongDTO) => SongOption = useCallback(
+    (song: SongDTO) => ({
       value: song.id,
       label: song.title,
     }),

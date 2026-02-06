@@ -7,6 +7,7 @@ import SessionForm from "./pages/SessionForm.js";
 import AppLayout from "./AppLayout.js";
 import LoginPage from "./pages/LoginPage.js";
 import App from "./App";
+import { SessionList } from "./pages/SessionList.js";
 
 const container = document.getElementById("root")!;
 
@@ -18,7 +19,8 @@ createRoot(container).render(
           <Route path="/" element={<App />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="sessions">
-            <Route index element={<SessionForm />} />
+            <Route index element={<SessionList sessions={[]} />} />
+            <Route element={<SessionForm />} />
           </Route>
         </Route>
       </Routes>
