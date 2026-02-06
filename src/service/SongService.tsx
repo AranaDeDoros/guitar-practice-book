@@ -1,7 +1,7 @@
-import { SongDTO } from "../dtos/SongDTO";
-import { SongCreateDTO } from "../dtos/SongCreateDTO";
-import { SongDeleteDTO } from "../dtos/SongDeleteDTO";
-import { SongUpdateDTO } from "../dtos/SongUpdateDTO";
+import { SongDTO } from "../domain/types/SongDTO";
+import { SongCreateDTO } from "../infra/dtos/SongCreateDTO";
+import { SongDeleteDTO } from "../infra/dtos/SongDeleteDTO";
+import { SongUpdateDTO } from "../infra/dtos/SongUpdateDTO";
 import { Config } from "../Config";
 
 const BACKEND_URL = Config.BACKENDURL;

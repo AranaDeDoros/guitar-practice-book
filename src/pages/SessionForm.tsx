@@ -3,7 +3,7 @@ import { Transition } from "@headlessui/react";
 import { MusicalNoteIcon, SlashIcon } from "@heroicons/react/24/solid";
 import { JSX } from "react";
 import CatalogueSelect from "../components/CatalogueSelect";
-import { Song, SongOption } from "../types/Session";
+import { Song, SongOption } from "../domain/types/Session";
 export default function SessionForm(): JSX.Element {
   const [sessionName, setSessionName] = useState<string>("");
   const [description, setDescription] = useState<string>("");

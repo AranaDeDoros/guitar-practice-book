@@ -3,10 +3,10 @@ import { TabService } from "../service/TabService";
 import { DeferredContent } from "primereact/deferredcontent";
 import { BlockUI } from "primereact/blockui";
 import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
-import { TabDTO } from "../dtos/TabDTO";
+import { TabDTO } from "../domain/types/TabDTO";
 import { JSX } from "react";
-import { TabRequestDTO } from "../dtos/TabRequest";
-import { TabSource } from "../enums/TabSourceEnum";
+import { TabRequestDTO } from "../infra/dtos/TabRequest";
+import { TabSource } from "../domain/enums/TabSourceEnum";
 
 interface TabContentProps {
   tab: TabDTO;

@@ -1,5 +1,5 @@
 import { MeterGroup } from "primereact/metergroup";
-import { ProgressEnum } from "../enums/ProgressEnum";
+import { ProgressEnum } from "../domain/enums/ProgressEnum";
 import { JSX } from "react";
 
 interface ProgressProps {

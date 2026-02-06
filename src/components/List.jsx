@@ -9,7 +9,7 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Player } from "./Player";
 import { classNames } from "primereact/utils";
-import { ProgressEnum } from "../enums/ProgressEnum";
+import { ProgressEnum } from "../domain/enums/ProgressEnum";
 import { Progress } from "./Progress";
 import { TabContent } from "./TabContent";
 import { ScrollTop } from "primereact/scrolltop";
